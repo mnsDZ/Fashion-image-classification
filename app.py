@@ -5,11 +5,15 @@ import os
 import glob
 import re
 import numpy as np
-
+import cv2  
 # Keras
+
 from keras.applications.imagenet_utils import preprocess_input, decode_predictions
 from keras.models import load_model
 from keras.preprocessing import image
+from keras.preprocessing.image import img_to_array
+
+
 
 # Flask utils
 from flask import Flask, redirect, url_for, request, render_template
@@ -18,33 +22,39 @@ from werkzeug.utils import secure_filename
 
 #Import all the classes 
 from classes import *
+from architectures import *
 
 # Define a flask app
 app = Flask(__name__)
 
-# Model saved with Keras model.save()
-MODEL_PATH = 'model/inceptionV3'
+model = create_mode_graph()
+model.load_weights('model/model_weights.h5')
 
-# Load your trained model
-model = load_model(MODEL_PATH)
-print('Model loaded. Check http://127.0.0.1:5000/')
+model2 = create_mode_graph2()
+model2.load_weights('model/28_color_weight.h5')
+
+print('Created Models Succecful')
 
 def model_predict(img_path, model):
-    img = image.load_img(img_path, target_size=(224, 224))
+    img = cv2.imread(img_path)
+    img = cv2.resize(img, ( W , H ))
+    img = img.astype("float") / 255.0
+    img = img_to_array(img)
+    img = np.expand_dims( img , axis=0 )
 
-    # Preprocessing the image
-    x = image.img_to_array(img)
-    # x = np.true_divide(x, 255)
-    x = np.expand_dims(x, axis=0)
+    ( PoseProba , CategoryProba ) = model.predict(img)
 
-    # Be careful how your trained model deals with the input
-    # otherwise, it won't make correct prediction!
-    x = preprocess_input(x, mode='caffe')
+    return ( PoseProba , CategoryProba )
 
-    preds = model.predict(x)
+def model_predict2( img_path , model ) :
+    img = cv2.imread(img_path)
+    img = cv2.resize(img, ( W , H ))
+    img = img.astype("float") / 255.0
+    img = img_to_array(img)
+    img = np.expand_dims( img , axis=0 )
 
-    return preds
-
+    colorProba = model.predict(img)
+    return colorProba
 
 @app.route('/', methods=['GET'])
 def index():
@@ -65,22 +75,24 @@ def upload():
         f.save(file_path)
 
         # Make prediction
-        preds = model_predict(file_path, model)
+        ( PoseProba , CategoryProba ) = model_predict( file_path , model )
+        Color_Proba = model_predict2( file_path , model2 )
         
-        color_predictions = preds [ : ,0:960]
-        category_predictions = preds [ : ,960:977]
+        CategoryIdx = CategoryProba[0].argmax()
+        PoseIdx = PoseProba[0].argmax()
+        ColorIdx = Color_Proba[0].argmax()
 
-        color_indices=np.argmax(color_predictions,axis=1)
-        category_indices=np.argmax(category_predictions,axis=1)
+        categoryLabel = category_classes[CategoryIdx]
+        poseLabel = pose_classes[PoseIdx]
+        colorLabel = color_classes[ColorIdx]
 
-        category_indices=category_indices+961
+        categoryText = "Category: {} ( {:.2f} % )".format( categoryLabel , CategoryProba[0][CategoryIdx] * 100 )
 
-        dictofclasses = { i : classes[i] for i in range(0, len(classes) ) }
+        poseText = "POSE: {} ( {:.2f} % )".format( poseLabel , PoseProba[0][PoseIdx] * 100 )
 
-        predictions1 = dictofclasses[int(color_indices.item(0))] 
-        predictions2 = dictofclasses[int(category_indices.item(0))] 
+        colorText = "Color: {} ( {:.2f} % )".format( colorLabel , Color_Proba[0][ColorIdx] * 100 )
 
-        result = "Color: "+str(predictions1)+ "// Category: " +str(predictions2)
+        result = str(categoryText) + " " + str(poseText) + " " + str(colorText)
     
         return result
 

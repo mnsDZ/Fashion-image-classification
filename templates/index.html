@@ -2,9 +2,11 @@
 
 {% block content %}
 
-
-<h2>Image Classifier</h2>
-
+<center>
+<div class="text">
+    <h1>We Predict Your Style!</h1>
+</div>
+<hr>
 <div>
     <form id="upload-file" method="post" enctype="multipart/form-data">
         <label for="imageUpload" class="upload-label">
@@ -19,7 +21,7 @@
             </div>
         </div>
         <div>
-            <button type="button" class="btn btn-primary btn-lg " id="btn-predict">Predict!</button>
+            <button type="button" class="predict-btn" id="btn-predict">Predict!</button>
         </div>
     </div>
 
@@ -31,4 +33,5 @@
 
 </div>
 
+</center>
 {% endblock %}
