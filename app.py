@@ -1,5 +1,5 @@
 from __future__ import division, print_function
-# coding=utf-8
+
 import sys
 import os
 import glob
@@ -7,20 +7,14 @@ import re
 import numpy as np
 import cv2  
 # Keras
-
 from keras.applications.imagenet_utils import preprocess_input, decode_predictions
 from keras.models import load_model
 from keras.preprocessing import image
 from keras.preprocessing.image import img_to_array
-
-
-
 # Flask utils
 from flask import Flask, redirect, url_for, request, render_template
 from werkzeug.utils import secure_filename
-# from gevent.pywsgi import WSGIServer
 
-#Import all the classes 
 from classes import *
 from architectures import *
 
@@ -86,13 +80,17 @@ def upload():
         poseLabel = pose_classes[PoseIdx]
         colorLabel = color_classes[ColorIdx]
 
-        categoryText = "Category: {} ( {:.2f} % )".format( categoryLabel , CategoryProba[0][CategoryIdx] * 100 )
+        # categoryText = "{} ({:.0f} %)".format( categoryLabel , CategoryProba[0][CategoryIdx] * 100 )
 
-        poseText = "POSE: {} ( {:.2f} % )".format( poseLabel , PoseProba[0][PoseIdx] * 100 )
+        # poseText = "{} ({:.0f} %)".format( poseLabel , PoseProba[0][PoseIdx] * 100 )
 
-        colorText = "Color: {} ( {:.2f} % )".format( colorLabel , Color_Proba[0][ColorIdx] * 100 )
+        # colorText = "{} ({:.0f} %)".format( colorLabel , Color_Proba[0][ColorIdx] * 100 )
 
-        result = str(categoryText) + " " + str(poseText) + " " + str(colorText)
+        cat = " {},{:.2f} ".format( categoryLabel , CategoryProba[0][CategoryIdx]  )
+        pose = " {},{:.2f} ".format( poseLabel , PoseProba[0][PoseIdx]  )
+        color = " {},{:.2f} ".format( colorLabel , Color_Proba[0][ColorIdx] )
+
+        result = str(cat) + " - " + str(pose) + " - " + str(color)
     
         return result
 
