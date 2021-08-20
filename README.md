@@ -20,17 +20,8 @@ methodology to automate the extraction of clothes attributes
 
 # Usage
 1-Download the repository 
-2-Insatall the python libraries requires 
+2-Install all required python libraries 
 
-
-# Models
-
-# Results
-
-# Implementations 
-
-# Conclusion 
-As conclusion, it can be said that the required goals have been gracefully accomplished for the given work. The complete framework allows the user to perform clothes image classification. We can consider this project as part of a global Fashion Recommendation System project focused on a deep learning architecture. The implemented deep learning algorithm helps to identify fashion-related items in an image. To identify and classify the object, detailed image analysis, and processing is required
 # Dataset
 You can download the dataset using Google Drive or Baidu Drive.
 
@@ -48,6 +39,13 @@ If you use these Dataset in your research, please cite:
  month = {June},
  year = {2016} 
  }
+
+
+
+
+# Conclusion 
+As conclusion, it can be said that the required goals have been gracefully accomplished for the given work. The complete framework allows the user to perform clothes image classification. We can consider this project as part of a global Fashion Recommendation System project focused on a deep learning architecture. The implemented deep learning algorithm helps to identify fashion-related items in an image. To identify and classify the object, detailed image analysis, and processing is required
+
 
 # License
 Feel free to use any part of my implementation as per requirement. Reach out to me if you make something using it, I would love to hear from you.
